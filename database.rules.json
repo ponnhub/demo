@@ -1,0 +1,40 @@
+{
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null",
+    "alumni": {
+      "queueGroup": {
+        ".read": true,
+        ".write": true
+      },
+      "group": {
+        ".read": true,
+        ".write": "auth != null",
+        "$groupId": {
+          ".read": "data.child('groupId').val() === $groupId",
+          ".write": "!data.exists() || data.child('groupId').val() === $groupId",
+          "users": {
+            ".read": "root.child('users').child(auth.uid).child('active').val() == true",
+            ".write": "auth != null",
+            "$userId": {
+              ".read": true,
+              ".write": "!data.exists() || root.child('alumni').child('user').child($userId).child('groupId').val() == $groupId"
+            }
+          }
+        }
+      },
+      "user": {
+        ".read": true,
+        ".write": "auth != null",
+        "$userId": {
+          ".read": "auth != null",
+          ".write": "!data.exists() || data.child('userId').val() === $userId"
+        }
+      }
+    },
+    "line": {
+      ".read": true,
+      ".write": true
+    }
+  }
+}
